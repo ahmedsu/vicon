@@ -33,10 +33,19 @@ class App extends Component {
     currency: '',
     regularImg: null,
     pokaz: null,
-    kursnaLista: null
+    kursnaLista: null,
+    focusedScreen: false
   }
 
   componentDidMount(){
+    const { navigation } = this.props;
+    navigation.addListener('willFocus', () =>
+      this.setState({ focusedScreen: true })
+    );
+    navigation.addListener('willBlur', () =>
+      this.setState({ focusedScreen: false })
+    );
+
     BankaAPI.GetCurrencies()
     .then((res) => {
       console.log("KURSNA LISTA: ");
@@ -260,9 +269,11 @@ class App extends Component {
 
   render()
   {
+    const { focusedScreen } = this.state;
+    console.log("RENDER FUNKC");
     return (
       <View style={style.screen}>
-      {!this.state.image ? (
+      {!this.state.image && focusedScreen ? (
         <View style={[{flex:1}, this.state.inProcess ? {flex: 1, justifyContent:'center'}: {}]}>
         <Camera
           ref={cam => {

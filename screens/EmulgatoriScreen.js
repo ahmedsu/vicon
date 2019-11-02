@@ -66,6 +66,10 @@ class EmulgatoriScreen extends PureComponent {
               <Icon color={'red'} size={50} name={'info'}/>
               <Text style={{color:'white',marginTop:15,fontSize:16}}>This product might <Text style={{color:'red',fontSize:16}}>not</Text> be good for you</Text>
               <TouchableOpacity
+                onPress={()=>{
+                  console.log("treba ic na Listu emulgatora");
+                  this.props.navigation.navigate("ListaEmulgatoraScreen",{listaEmulgatora:this.state.nizPodataka});
+              }}
             style={[styles.btn,{backgroundColor:'#29AAE3',marginTop:30}]}
             >
                 <Text style={styles.btnText}>See details</Text>

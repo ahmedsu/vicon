@@ -29,7 +29,9 @@ class App extends Component {
     visionResp: [],
     inProcess: false,
     croppedImg: '',
-    currency: ''
+    currency: '',
+    regularImg: null,
+    pokaz: null
   }
 
   /**
@@ -56,46 +58,8 @@ class App extends Component {
   }
 
   resetFinal() {
-      this.setState({loading:false, inProcess: false, image: null});
+      this.setState({loading:false, inProcess: false, image: null,visionResp:[], regularImg: null});
   }
-
-  /**
-   * takePicture
-   *
-   * Responsible for getting image from react native camera and
-   * starting image processing.
-   *
-   * @param {*} camera
-   * @author Zain Sajjad
-   */
-  takePicture = async camera => {
-    console.log("TAKE PICTURE POZVAN");
-    this.setState({
-      loading: true
-    });
-    try {
-      const data = await camera.takePictureAsync(PICTURE_OPTIONS);
-      if (!data.uri) {
-        throw "OTHER";
-      }
-
-      this.setState(
-        {
-          image: data.uri
-        },
-        () => {
-          console.log(data.uri);
-          this.processImage(data.uri, {
-            height: data.height,
-            width: data.width
-          });
-        }
-      );
-    } catch (e) {
-      console.warn(e);
-      this.reset(e);
-    }
-  };
 
 
   /* MAIN FUNKCIJA */
@@ -105,9 +69,11 @@ class App extends Component {
       const options = { quality: 1, base64: true,skipProcessing:true, orientation:'portrait' };
       const data = await this.camera.takePictureAsync(options);
       console.log(data.uri);
-     
+      this.setState({regularImg: data.uri});
       let xOffset = (data.width/4.3);
       let yOffset = (data.height/4.3);
+      //let xOffset = (screenWidth-280)/2;
+      //let yOffset = (screenHeight-220)/2;
       console.log("XOFFSET: ", xOffset);
       console.log("YOFFSET: ", yOffset);
  
@@ -119,16 +85,22 @@ class App extends Component {
  
       const cropData = {
        offset: {
-           x: xOffset,
-           y: yOffset,
+           x: xOffset+50,
+           y: yOffset+20,
        },
        size: { // OSE SU OBRNUTE Width JE Height; Ovdje se radi stimanje za visinu i sirinu slike
-           width: (data.width / 2.15), 
-           height: (data.height/2),
+           width: (data.width/1.9), 
+           height: (data.height/1.9) - 20,
+          
        },
        resizeMode: 'cover'
      };
- 
+     this.setState({pokaz: {
+       width: data.width/2,
+       height: data.height/2,
+       x: xOffset,
+       y: yOffset
+     }});
      let croppedImageUri = await ImageEditor.cropImage(data.uri, cropData);
      console.log("Cropped image uri");
      console.log(croppedImageUri);
@@ -141,7 +113,7 @@ class App extends Component {
      console.log(_visionResp);
      
      this.setState({image: croppedImageUri}, () => {
-       if(_visionResp.length >0){
+       if(_visionResp.length > 0){
           this.processImage(croppedImageUri, {
             height: cropData.size.height,
             width: cropData.size.width
@@ -204,7 +176,7 @@ class App extends Component {
   mapVisionRespToScreen = (visionResp, imageProperties) => {
     console.log("MAP VISION RESP POZVAN");
     const IMAGE_TO_SCREEN_X = 280 / imageProperties.height;
-    const IMAGE_TO_SCREEN_Y = 230 / imageProperties.width;
+    const IMAGE_TO_SCREEN_Y = 220 / imageProperties.width;
 
     return visionResp.map(item => {
         
@@ -253,7 +225,7 @@ class App extends Component {
           ratio="4:3"
           style={style.camera}
           notAuthorizedView={null}
-          //zoom={}
+          zoom={0}
           //playSoundOnCapture
         >
           {/*({ camera, status }) => {
@@ -269,7 +241,7 @@ class App extends Component {
               </View>
             );
           }*/}
-          <BarcodeMask edgeColor={'#62B1F6'} width={280} height={230}></BarcodeMask>
+          <BarcodeMask edgeColor={'#62B1F6'} width={280} height={220}></BarcodeMask>
         </Camera>
         {this.state.inProcess &&
           <View style={{width:'100%', justifyContent:'center', alignItems:'center'}}>
@@ -315,52 +287,64 @@ class App extends Component {
         </ImageBackground>
           ) : null*/}
 
-      {this.state.image &&
-      <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+      {this.state.image && this.state.regularImg &&
+      <View style={{flex:1}}>
+      <ImageBackground  blurRadius={3} source={{uri: this.state.regularImg}} imageStyle={{opacity: 0.5}} style={{ flex:1, justifyContent:'center', alignItems:'center'}}>
+
         <View style={{width:'100%', justifyContent:'center', alignItems:'center', position:'absolute', top: 30}}>
-          <View style={{width: '65%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'rgba(41,171,226,0.6)', zIndex: 9999}}>
+          <View style={{width: '65%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'#061e3e', zIndex: 9999}}>
             <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 26}}>{this.state.currency != '' ? this.state.currency : '1.73'}</Text>
             <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 26}}>BAM</Text>
 
           </View>
         </View>
-        <ImageBackground source={{uri: this.state.image}} style={{width: 280, height: 230}}>
+        <ImageBackground source={{uri: this.state.image}} style={{width: 280, height: 220}}>
           {this.state.visionResp.map(item => {
-              return (
-                <TouchableOpacity
-                  onPress={() => {
-                    console.log(item);
-                    let str = item.text;
-                    let numbers = str.match(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/);
-                    console.log(numbers);
-                    this.setState({currency: numbers});
-                  }}
-                  style={[style.boundingRect, item.position]}
-                  key={item.text}
-                />
-              );
+              let onlyNumber = item.text.match(/[-]{0,1}[\d]*[\.,]{0,1}[\d]+/);
+              console.log("ONLY NUMBER: ", onlyNumber);
+              if(onlyNumber != null){
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log(item);
+                      //let str = item.text;
+                      //let numbers = str.match(/[-]{0,1}[\d]*[\.,]{0,1}[\d]+/);
+                      //console.log(numbers);
+                      this.setState({currency: onlyNumber});
+                    }}
+                    style={[style.boundingRect, item.position]}
+                    key={item.text}
+                  />
+                );
+              }
             })}
         </ImageBackground>
+        {this.state.pokaz != null &&
+        <View style={{zIndex:9999,backgroundColor:'transparent',borderWidth:1, borderColor:'green', width: this.state.pokaz.width, height: this.state.pokaz.height, position:'absolute', left: this.state.pokaz.x, top: this.state.pokaz.y}}>
+          <Text>OVDJE</Text>
+        </View>
+        }
         <View style={{position:'absolute', bottom: 20, justifyContent:'center', alignItems:'center', width:'100%'}}>
-        <View style={{width:'65%', flexDirection:'row', justifyContent:'space-between', marginBottom: 15}}>
-            <View style={{width: '58%', height: 55, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'rgba(41,171,226,0.7)', zIndex: 9999}}>
-              <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 26}}></Text>
+        <View style={{width:'75%', flexDirection:'row', justifyContent:'space-between', marginBottom: 15}}>
+            <View style={{width: '58%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'#0984e3', zIndex: 9999}}>
+              <Image source={require('./src/images/cartWhite.png')} style={{width: 45, height: 35}} resizeMode={'contain'}></Image>
               <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 18}}>Add to list</Text>
             </View>
-            <View style={{width: '35%', height: 55, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'rgba(41,171,226,0.7)', zIndex: 9999}}>
-              <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 26}}></Text>
-              <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 18}}>X</Text>
-            </View>
+            <TouchableOpacity onPress={() =>this.resetFinal()} style={{width: '35%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'center', backgroundColor:'#061e3e', zIndex: 9999}}>
+
+              <Text style={{color:'#d63031', fontWeight:'bold', fontSize: 28}}>X</Text>
+            </TouchableOpacity>
           </View>
-            <TouchableOpacity style={{
+           {/*} <TouchableOpacity style={{
                     padding: 15, 
                     justifyContent:'center',
                     alignItems:'center',
-                    backgroundColor:'#061e3e'
+                    backgroundColor:'transparent'
             }} onPress={() =>this.resetFinal()}>
-              <Text style={{color:'#fff', fontSize: 17, fontWeight:'bold'}}>Next</Text>
-            </TouchableOpacity>
+              <Text style={{color:'#00b894', fontSize: 17, fontWeight:'bold'}}>NEXT</Text>
+          </TouchableOpacity>*/}
           </View>
+      </ImageBackground>
       </View>
       }
     </View>

@@ -42,10 +42,10 @@ class PersonalInfoScreen extends Component{
                 ></Image>
             </View>
             <Text style={{color:'white',fontSize:20}}>Personal info</Text>
-            <TextInput placeholder='Name' onChangeText={(text)=>{this.setState({name:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
-            <TextInput placeholder='Email' onChangeText={(text)=>{this.setState({email:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
+            <TextInput placeholder='Name' autoCapitalize = 'none' onChangeText={(text)=>{this.setState({name:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
+            <TextInput placeholder='Email' autoCapitalize = 'none' onChangeText={(text)=>{this.setState({email:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
            
-            <TextInput placeholder='Password' secureTextEntry onChangeText={(text)=>{this.setState({password:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
+            <TextInput placeholder='Password' autoCapitalize = 'none' secureTextEntry onChangeText={(text)=>{this.setState({password:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
             <View style={{height:50,width:'75%',justifyContent:'flex-end',alignItems:'flex-end',marginTop:30}}>
             <TouchableOpacity
             onPress={this.registrujSe}

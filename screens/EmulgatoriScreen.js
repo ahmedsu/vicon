@@ -13,14 +13,28 @@ class EmulgatoriScreen extends PureComponent {
       emulgatori:[],
       nizPodataka:null,
       uslikano:false,
-      uri:''
+      uri:'',
+      focusedScreen: false
     }
   }
+
+  componentDidMount(){
+    const { navigation } = this.props;
+    navigation.addListener('willFocus', () =>
+      this.setState({ focusedScreen: true })
+    );
+    navigation.addListener('willBlur', () =>
+      this.setState({ focusedScreen: false })
+    );
+  }
+
   render() {
+    const { focusedScreen } = this.state;
+    
     return (
       <View style={styles.container}>
         <View style={{flex:1}}>
-          {!this.state.uslikano ?
+          {!this.state.uslikano && focusedScreen ?
         <RNCamera
           ref={ref => {
             this.camera = ref;

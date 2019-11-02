@@ -5,10 +5,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import UserAPI from './services/UserAPI';
 
 class LoginScreen extends Component{
-    static navigationOptions = {
-        headerMode:'none'
-      };
-
     constructor(props)
     {
         super(props);
@@ -23,6 +19,10 @@ class LoginScreen extends Component{
         UserAPI.Login(email,password)
         .then((res)=>{
             console.log(res);
+           /* AsyncStorage.setItem("jwtToken",res.jwt)
+            .then(()=>{
+                this.props.navigation.navigate("App");
+            })*/
         })
         //api poziv za provjeru
         //ako je ok spremi jwtToken i idi na main screen

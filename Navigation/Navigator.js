@@ -9,12 +9,12 @@ import EmulgatoriScreen from '../screens/EmulgatoriScreen';
  import { createStackNavigator } from 'react-navigation-stack';
  
 const Stack= createStackNavigator({
-    App,
-    EmulgatoriScreen,
  PrviScreen,
  DefaultCurrencyScreen,
  PersonalInfoScreen,
- LoginScreen
+ LoginScreen,
+ App,
+ EmulgatoriScreen
 });
 
 const Navigator= createBottomTabNavigator({

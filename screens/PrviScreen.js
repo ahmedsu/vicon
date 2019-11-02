@@ -6,13 +6,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 class PrviScreen extends Component{
     componentDidMount()
     {
-        
+       // this.pogledajToken();
     }
     pogledajToken=async ()=>{
         let jwt=await AsyncStorage.getItem("jwtToken");
         if(jwt && jwt.length>0)
         {
             console.log("gleda token");
+            this.props.navigation.navigate("App");
             //posalji usera u app
         }
     }
@@ -30,7 +31,7 @@ class PrviScreen extends Component{
             <Text style={{color:'white',fontSize:16}}>Save money & stay healthy</Text>
             <TouchableOpacity
             style={[style.btn,{backgroundColor:'#29AAE3'}]}
-            onPress={()=>{this.props.navigation.navigate("LoginScreen")}}
+            onPress={()=>{console.log("poziva se"); this.props.navigation.navigate("LoginScreen")}}
             >
                 <Text style={style.btnText}>Log in</Text>
             </TouchableOpacity>

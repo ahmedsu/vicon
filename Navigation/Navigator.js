@@ -33,7 +33,9 @@ const Navigator= createBottomTabNavigator({
     headerMode: 'none',
     navigationOptions: {
         headerVisible: false,
-    }
+    },
+    //lazy: true,
+    
 });
 
 export default createAppContainer(createSwitchNavigator(

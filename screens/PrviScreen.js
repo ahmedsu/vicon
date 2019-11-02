@@ -2,30 +2,19 @@ import React,{Component} from 'react';
 import {View,Text,TextInput,ImageBackground,TouchableOpacity,StyleSheet,Image} from 'react-native';
 import styles from './style';
 import AsyncStorage from '@react-native-community/async-storage';
-import UserAPI from './services/UserAPI';
 
-class LoginScreen extends Component{
-    static navigationOptions = {
-        headerMode:'none'
-      };
-
-    constructor(props)
+class PrviScreen extends Component{
+    componentDidMount()
     {
-        super(props);
-        this.state={
-            email:'',
-            password:''
-        }
+        
     }
-
-    logIn=()=>{
-        const {email,password}=this.state;
-        UserAPI.Login(email,password)
-        .then((res)=>{
-            console.log(res);
-        })
-        //api poziv za provjeru
-        //ako je ok spremi jwtToken i idi na main screen
+    pogledajToken=async ()=>{
+        let jwt=await AsyncStorage.getItem("jwtToken");
+        if(jwt && jwt.length>0)
+        {
+            console.log("gleda token");
+            //posalji usera u app
+        }
     }
     render()
     {
@@ -38,14 +27,18 @@ class LoginScreen extends Component{
                 ></Image>
             </View>
             <Text style= {{color:'white',fontSize:20}}>Welcome to ViCon</Text>
-            <TextInput placeholder='Email' onChangeText={(text)=>{this.setState({email:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
-            <TextInput placeholder='Password' secureTextEntry onChangeText={(text)=>{this.setState({password:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
-           
+            <Text style={{color:'white',fontSize:16}}>Save money & stay healthy</Text>
             <TouchableOpacity
-            style={[style.btn,{backgroundColor:'#29AAE3',marginTop:50}]}
-            onPress={()=>{this.logIn}}
+            style={[style.btn,{backgroundColor:'#29AAE3'}]}
+            onPress={()=>{this.props.navigation.navigate("LoginScreen")}}
             >
                 <Text style={style.btnText}>Log in</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+            style={style.btn}
+            onPress={()=>{this.props.navigation.navigate("PersonalInfoScreen")}}
+            >
+                <Text style={style.btnText} >Register</Text>
             </TouchableOpacity>
             </View>
         );
@@ -67,4 +60,4 @@ const style=StyleSheet.create({
         fontSize:14   
     }
 })
-export default LoginScreen;
+export default PrviScreen;

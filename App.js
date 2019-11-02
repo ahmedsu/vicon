@@ -14,6 +14,7 @@ import ImageEditor from "@react-native-community/image-editor";
 import style, { screenHeight, screenWidth } from './src/styles/style';
 import BarcodeMask from 'react-native-barcode-mask';
 import ImagePicker from 'react-native-image-crop-picker';
+import BankaAPI from './screens/services/BankaAPI';
 
 const PICTURE_OPTIONS = {
   quality: 0.8,
@@ -31,7 +32,18 @@ class App extends Component {
     croppedImg: '',
     currency: '',
     regularImg: null,
-    pokaz: null
+    pokaz: null,
+    kursnaLista: null
+  }
+
+  componentDidMount(){
+    BankaAPI.GetCurrencies()
+    .then((res) => {
+      console.log("KURSNA LISTA: ");
+      console.log(res);
+      this.setState({kursnaLista: res.data.CurrencyExchangeItems});
+    })
+    .catch((err) => console.log("ERROR: ", err));
   }
 
   /**
@@ -202,6 +214,37 @@ class App extends Component {
     });
   };
 
+  removeFromArr = (item) => {
+    console.log("POZVANO!");
+    var arr = this.state.visionResp;
+    var index = arr.indexOf(item);
+  
+    if (index > -1) {
+       arr.splice(index, 1);
+    }
+
+    this.setState({visionResp: arr});
+  
+  }
+
+  getCurrencyRate = (value, currency) => {
+    let _item = null;
+    let arr = this.state.kursnaLista;
+    console.log("ARR: ");
+    console.log(arr);
+    arr.forEach((item, index) => {
+      if(item.AlphaCode == currency){
+        _item = item;
+        //break;
+      }
+    });
+    console.log("RATE: ", parseFloat(_item.Middle).toFixed(2));
+    console.log("VALUE: ", parseFloat(value[0]).toFixed(2));
+    console.log("CEK: ", parseFloat((value[0]/_item.Middle).toFixed(2)))
+    //let result = (value[0]).toFixed(2)/parseFloat(_item.Middle);
+    //console.log("RESULT: ", result);
+    return 1;
+  }
 
     /**
    * React Native render function
@@ -293,14 +336,19 @@ class App extends Component {
 
         <View style={{width:'100%', justifyContent:'center', alignItems:'center', position:'absolute', top: 30}}>
           <View style={{width: '65%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'#061e3e', zIndex: 9999}}>
-            <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 26}}>{this.state.currency != '' ? this.state.currency : '1.73'}</Text>
-            <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 26}}>BAM</Text>
+            <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 26}}>{this.state.currency != '' ? this.getCurrencyRate(this.state.currency, 'EUR') : '1.73'}</Text>
+            <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 26}}>EUR</Text>
 
           </View>
         </View>
         <ImageBackground source={{uri: this.state.image}} style={{width: 280, height: 220}}>
           {this.state.visionResp.map(item => {
+            console.log("ITEM: ", item);
               let onlyNumber = item.text.match(/[-]{0,1}[\d]*[\.,]{0,1}[\d]+/);
+              let isMore = false;
+              if(this.state.visionResp.length > 0){
+                isMore = true;
+              }
               console.log("ONLY NUMBER: ", onlyNumber);
               if(onlyNumber != null){
                 return (
@@ -312,9 +360,23 @@ class App extends Component {
                       //console.log(numbers);
                       this.setState({currency: onlyNumber});
                     }}
-                    style={[style.boundingRect, item.position]}
+                    style={[style.boundingRect, item.position, {zIndex: 9999}]}
                     key={item.text}
-                  />
+
+                  >
+                    <View style={{ position:'absolute', 
+                              top: -10, right: -5, flex:1, zIndex: 999}}>
+                  <TouchableOpacity 
+                      onPress={() => this.removeFromArr(item)}
+                      style={{
+                              borderRadius: 32, width: 32, height: 32, 
+                              backgroundColor: 'red', justifyContent:'center',
+                              alignItems:'center', zIndex: 999
+                      }}>
+                      <Text style={{fontSize: 16, color:'white'}}>X</Text>
+                    </TouchableOpacity>
+                  </View>
+                  </TouchableOpacity>
                 );
               }
             })}

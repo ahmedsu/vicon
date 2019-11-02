@@ -7,12 +7,13 @@ import PersonalInfoScreen from '../screens/PersonalInfoScreen';
 import LoginScreen from '../screens/LoginScreen';
 import EmulgatoriScreen from '../screens/EmulgatoriScreen';
  import { createStackNavigator  } from 'react-navigation-stack';
- 
+ import ListaEmulgatoraScreen from '../screens/ListaEmulgatoraScreen';
 const Stack= createStackNavigator({
  PrviScreen,
  DefaultCurrencyScreen,
  PersonalInfoScreen,
  LoginScreen,
+ ListaEmulgatoraScreen
  //App,
  //EmulgatoriScreen
 },

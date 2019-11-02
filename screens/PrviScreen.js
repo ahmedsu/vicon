@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 class PrviScreen extends Component{
     componentDidMount()
     {
-        this.pogledajToken();
+       // this.pogledajToken();
     }
     pogledajToken=async ()=>{
         let jwt=await AsyncStorage.getItem("jwtToken");

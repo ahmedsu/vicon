@@ -238,12 +238,17 @@ class App extends Component {
         //break;
       }
     });
-    console.log("RATE: ", parseFloat(_item.Middle).toFixed(2));
-    console.log("VALUE: ", parseFloat(value[0]).toFixed(2));
-    console.log("CEK: ", parseFloat((value[0]/_item.Middle).toFixed(2)))
-    //let result = (value[0]).toFixed(2)/parseFloat(_item.Middle);
-    //console.log("RESULT: ", result);
-    return 1;
+
+    let valueChange = value[0].replace(",",".");
+    let rateChange = _item.Middle.replace(",",".");
+
+    console.log("VALUE: ", parseFloat(valueChange).toFixed(2));
+    console.log("RATE: ", _item.Middle);
+
+   // console.log("CEK: ", parseFloat((value[0]/_item.Middle).toPrecision(2)))
+    let result = parseFloat(valueChange).toFixed(2)/parseFloat(rateChange);
+    console.log("RESULT: ", result);
+    return result.toPrecision(3);
   }
 
     /**

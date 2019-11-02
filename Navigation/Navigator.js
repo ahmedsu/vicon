@@ -1,31 +1,51 @@
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import {createAppContainer} from 'react-navigation';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
  import App from '../App';
  import PrviScreen from '../screens/PrviScreen';
 import DefaultCurrencyScreen from '../screens/DefautCurrencyScreen';
 import PersonalInfoScreen from '../screens/PersonalInfoScreen';
 import LoginScreen from '../screens/LoginScreen';
 import EmulgatoriScreen from '../screens/EmulgatoriScreen';
- import { createStackNavigator } from 'react-navigation-stack';
+ import { createStackNavigator  } from 'react-navigation-stack';
  
 const Stack= createStackNavigator({
  PrviScreen,
  DefaultCurrencyScreen,
  PersonalInfoScreen,
  LoginScreen,
- App,
- EmulgatoriScreen
+ //App,
+ //EmulgatoriScreen
+},
+{
+    headerMode: 'none',
+    initialRouteName: 'PrviScreen',
+    navigationOptions: {
+        headerVisible: false,
+    }
 });
 
 const Navigator= createBottomTabNavigator({
-    PrviScreen:{
-        screen:PrviScreen,
-        headerMode:'none',
-        navigationOptions:{
-           headerVisible:false
-        }
-    },    
-    App
+    App,
+    EmulgatoriScreen
+},
+{
+    headerMode: 'none',
+    navigationOptions: {
+        headerVisible: false,
+    }
 });
 
-export default createAppContainer(Stack);
+export default createAppContainer(createSwitchNavigator(
+    {
+      ////AuthLoading: AuthLoadingScreen,
+      //Auth: Auth,
+      Navigator: Navigator,
+      Stack: Stack
+     // Main: MainNavigator
+    },
+    {
+      initialRouteName: 'Stack',
+    }
+  ));
+
+//export default createAppContainer(Stack);

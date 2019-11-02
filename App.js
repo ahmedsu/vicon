@@ -404,10 +404,10 @@ class App extends Component {
         }
         <View style={{position:'absolute', bottom: 20, justifyContent:'center', alignItems:'center', width:'100%'}}>
         <View style={{width:'75%', flexDirection:'row', justifyContent:'space-between', marginBottom: 15}}>
-            <View style={{width: '58%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'#0984e3', zIndex: 9999}}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('ShoppingList')} style={{width: '58%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'#0984e3', zIndex: 9999}}>
               <Image source={require('./src/images/cartWhite.png')} style={{width: 45, height: 35}} resizeMode={'contain'}></Image>
               <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 18}}>Add to list</Text>
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() =>this.resetFinal()} style={{width: '35%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'center', backgroundColor:'#061e3e', zIndex: 9999}}>
 
               <Text style={{color:'#d63031', fontWeight:'bold', fontSize: 28}}>X</Text>

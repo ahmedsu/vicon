@@ -9,6 +9,7 @@ import EmulgatoriScreen from '../screens/EmulgatoriScreen';
  import { createStackNavigator } from 'react-navigation-stack';
  
 const Stack= createStackNavigator({
+    App,
     EmulgatoriScreen,
  PrviScreen,
  DefaultCurrencyScreen,

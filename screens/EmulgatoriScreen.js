@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
-import {StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View,ImageBackground } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import RNTextDetector from 'react-native-text-detector';
 import EmulgatorAPI from '../screens/services/EmulgatorAPI';
+import Icon from 'react-native-vector-icons/Feather';
 
 class EmulgatoriScreen extends PureComponent {
   constructor(props)
@@ -10,13 +11,16 @@ class EmulgatoriScreen extends PureComponent {
     super(props);
     this.state={
       emulgatori:[],
-      nizPodataka:null
+      nizPodataka:null,
+      uslikano:false,
+      uri:''
     }
   }
   render() {
     return (
       <View style={styles.container}>
         <View style={{flex:1}}>
+          {!this.state.uslikano ?
         <RNCamera
           ref={ref => {
             this.camera = ref;
@@ -36,7 +40,27 @@ class EmulgatoriScreen extends PureComponent {
             buttonPositive: 'Ok',
             buttonNegative: 'Cancel',
           }}
-        />
+        />:
+        <View style={{flex:1}}>
+          <ImageBackground
+          source={{uri:this.state.uri}}
+          style={{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+          >
+            <View
+            style={{backgroundColor:'#061F3E',height:'45%',width:'90%',alignItems:'center',justifyContent:'center',borderRadius:10}}
+            >
+              <Icon color={'red'} size={50} name={'info'}/>
+              <Text style={{color:'white',marginTop:15,fontSize:16}}>This product might <Text style={{color:'red',fontSize:16}}>not</Text> be good for you</Text>
+              <TouchableOpacity
+            style={[styles.btn,{backgroundColor:'#29AAE3',marginTop:30}]}
+            >
+                <Text style={styles.btnText}>See details</Text>
+            </TouchableOpacity>
+            </View>
+          </ImageBackground>
+        </View>
+
+        }
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
           <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
             <Text style={{ fontSize: 14 }}> USLIKAJ </Text>
@@ -53,6 +77,7 @@ class EmulgatoriScreen extends PureComponent {
       const options = { quality: 1, base64: true,skipProcessing:true };
       const data = await this.camera.takePictureAsync(options);
       console.log(data.uri);
+      this.setState({uri:data.uri});
       let detektovano=await RNTextDetector.detectFromUri(data.uri);
       console.log("DETEKTOVANO");
       console.log(detektovano);
@@ -100,6 +125,9 @@ class EmulgatoriScreen extends PureComponent {
             if((emulgatorCode.charCodeAt(j)>47 && emulgatorCode.charCodeAt(j)<58) || (emulgatorCode.charCodeAt(j)>96 && emulgatorCode.charCodeAt(j)<123))
             {
               pravaVr+=emulgatorCode[j];
+              
+            }
+            else{
               break;
             }
           }
@@ -109,13 +137,23 @@ class EmulgatoriScreen extends PureComponent {
           let obj=await EmulgatorAPI.GetEmulgatorByCode(pravaVr);
           console.log("OBJ");
           console.log(obj);
+          if(obj && obj.data && obj.data!=undefined)
           data.push(obj.data);
-          
         }
-        this.setState({nizPodataka:[].concat(data)},async ()=>{
-          console.log("OVO JE NIZ PODATAKA ");
-          console.log(this.state.nizPodataka);
-        });
+        console.log("ovde je data");
+        console.log(data);
+        if(data && data.length>0 && data!=undefined)
+        {
+          this.setState({nizPodataka:[].concat(data)},async ()=>{
+            console.log("OVO JE NIZ PODATAKA ");
+            console.log(this.state.nizPodataka);
+            if(this.state.nizPodataka.length>0)
+            {
+              this.setState({uslikano:true});
+            }
+          });
+        }
+        
         
       });      
     }
@@ -142,6 +180,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     margin: 20,
   },
+  btn:{
+    width:'70%',
+    height:50,
+    borderWidth:2,
+    borderColor:'#29AAE3',
+    alignItems:'center',
+    justifyContent:'center',
+    borderRadius:5
+},
+btnText:{
+    color:'white',
+    fontSize:14   
+}
 });
 
 export default EmulgatoriScreen;

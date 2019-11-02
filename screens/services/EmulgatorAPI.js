@@ -3,6 +3,18 @@ import Axios from 'axios';
 let emulgatorBaseLink='';
 
 const EmulgatorAPI={
+  /*GetEmulgatorByCode:(emulgatorCode)=>{
+    Axios.get(`http://192.168.137.222:1337/Emulgators?ecode_eq=${emulgatorCode}`)
+    .then(res=>{
+      console.log(res);
+      return res;
+    })
+    .catch(err=>{
+      console.log(err);
+      return err;
+    })
+
+  }*/
     GetEmulgatorByCode : (emulgatorCode) => {
         return Axios.get('https://vx-e-additives.p.rapidapi.com/additives/'+emulgatorCode,{
             "headers":{
@@ -20,5 +32,6 @@ const EmulgatorAPI={
                       return error;
                     })  
         }
+
 }
 export default EmulgatorAPI;

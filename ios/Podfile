@@ -45,6 +45,9 @@ target 'vicon' do
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+  pod 'react-native-image-editor', :path => '../node_modules/@react-native-community/image-editor'
+
+  pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
 
   target 'viconTests' do
     inherit! :search_paths

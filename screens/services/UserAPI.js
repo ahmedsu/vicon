@@ -23,7 +23,7 @@ const UserAPI={
         })              
     },
     Login:(email,password)=>{
-        return fetch('http://192.168.137.222:1337/auth/local/register', {
+        return fetch('http://192.168.137.222:1337/auth/local', {
         method: 'POST',
         headers: {
             Accept: 'application/json',

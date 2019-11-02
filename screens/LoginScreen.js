@@ -16,13 +16,15 @@ class LoginScreen extends Component{
 
     logIn=()=>{
         const {email,password}=this.state;
+        console.log("email i password");
+        console.log(email+ " "+password);
         UserAPI.Login(email,password)
         .then((res)=>{
             console.log(res);
-           /* AsyncStorage.setItem("jwtToken",res.jwt)
+            AsyncStorage.setItem("jwtToken",res.jwt)
             .then(()=>{
                 this.props.navigation.navigate("App");
-            })*/
+            })
         })
         //api poziv za provjeru
         //ako je ok spremi jwtToken i idi na main screen
@@ -38,12 +40,12 @@ class LoginScreen extends Component{
                 ></Image>
             </View>
             <Text style= {{color:'white',fontSize:20}}>Welcome to ViCon</Text>
-            <TextInput placeholder='Email' onChangeText={(text)=>{this.setState({email:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
-            <TextInput placeholder='Password' secureTextEntry onChangeText={(text)=>{this.setState({password:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
+            <TextInput autoCapitalize = 'none' placeholder='Email' onChangeText={(text)=>{this.setState({email:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
+            <TextInput autoCapitalize = 'none' placeholder='Password' secureTextEntry onChangeText={(text)=>{this.setState({password:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
            
             <TouchableOpacity
             style={[style.btn,{backgroundColor:'#29AAE3',marginTop:50}]}
-            onPress={()=>{this.logIn}}
+            onPress={this.logIn}
             >
                 <Text style={style.btnText}>Log in</Text>
             </TouchableOpacity>

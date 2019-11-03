@@ -41,6 +41,10 @@ class PrviScreen extends Component{
             >
                 <Text style={style.btnText} >Register</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('Navigator')} style={{marginTop: 40, justifyContent:'center', alignItems:'center'}}>
+                <Text style={{color:'#00b894', fontSize: 17}}>SKIP</Text>
+            </TouchableOpacity>
             </View>
         );
     }

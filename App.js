@@ -18,6 +18,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import BankaAPI from './screens/services/BankaAPI';
 import AsyncStorage from '@react-native-community/async-storage';
 
+console.disableYellowBox = true;
 
 const PICTURE_OPTIONS = {
   quality: 0.8,

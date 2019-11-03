@@ -5,6 +5,8 @@ import RNTextDetector from 'react-native-text-detector';
 import EmulgatorAPI from '../screens/services/EmulgatorAPI';
 import Icon from 'react-native-vector-icons/Feather';
 
+console.disableYellowBox = true;
+
 class EmulgatoriScreen extends PureComponent {
   constructor(props)
   {

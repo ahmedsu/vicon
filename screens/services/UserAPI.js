@@ -28,6 +28,7 @@ const UserAPI={
     },
     Login:(email,password)=>{
         const fetchUrl = `${config.serverIp}/auth/local/`;
+        console.log("URL ", fetchUrl);
         return fetch(fetchUrl, {
         method: 'POST',
         headers: {

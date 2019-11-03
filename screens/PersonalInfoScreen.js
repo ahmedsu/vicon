@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,Text,TextInput,ImageBackground,TouchableOpacity,StyleSheet,Image,ScrollView} from 'react-native';
+import {View,Text,TextInput,ImageBackground,TouchableOpacity,StyleSheet,Image,ScrollView, Alert} from 'react-native';
 import styles from './style';
 import Icon from 'react-native-vector-icons/Ionicons';
 import UserAPI from './services/UserAPI';
@@ -15,22 +15,7 @@ class PersonalInfoScreen extends Component{
             password:''
         }
     }
-    registrujSe=()=>{
-       const {name,email,password}=this.state;
-       console.log("hoce registrovat");
-       console.log(name);
-       console.log(email);
-       console.log(password);
-        UserAPI.Register(name,email,password)
-        .then(res=>{
-            console.log("dobio sam response");
-            console.log(res.jwt);
-            AsyncStorage.setItem("jwtToken",res.jwt)
-            .then(()=>{
-                this.props.navigation.navigate('DefaultCurrencyScreen');
-            })
-        })
-    }
+
     render()
     {
         return(
@@ -48,7 +33,19 @@ class PersonalInfoScreen extends Component{
             <TextInput placeholder='Password' autoCapitalize = 'none' secureTextEntry onChangeText={(text)=>{this.setState({password:text})}} style={{borderBottomColor:'#29AAE3',color:'white',borderBottomWidth:2,width:'70%'}} placeholderTextColor='white'></TextInput>
             <View style={{height:50,width:'75%',justifyContent:'flex-end',alignItems:'flex-end',marginTop:30}}>
             <TouchableOpacity
-            onPress={this.registrujSe}
+            onPress={
+                () => {
+                    if(this.state.name != '' && this.state.email != '' && this.state.password != ''){
+                        this.props.navigation.navigate('DefaultCurrencyScreen', {name: this.state.name, email: this.state.email, password: this.state.password})
+                    } else {
+                        Alert.alert(
+                            'Error',
+                            'You need to fill all fields.'
+                        );
+                    }
+                  
+                }
+            }
             style={{flexDirection:'row',alignItems:'center'}}
             >
                 <Text style={{color:'#29AAE3',marginRight:8}}>Next</Text>

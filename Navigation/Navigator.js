@@ -7,6 +7,7 @@ import PersonalInfoScreen from '../screens/PersonalInfoScreen';
 import LoginScreen from '../screens/LoginScreen';
 import EmulgatoriScreen from '../screens/EmulgatoriScreen';
 import ShoppingList from '../screens/ShoppingList';
+import ListaEmulgatoraScreen from '../screens/ListaEmulgatoraScreen';
  import { createStackNavigator  } from 'react-navigation-stack';
  import {Image, Text, View} from 'react-native';
  import React from 'react';
@@ -16,6 +17,7 @@ const Stack= createStackNavigator({
  DefaultCurrencyScreen,
  PersonalInfoScreen,
  LoginScreen,
+ ListaEmulgatoraScreen
  //App,
  //EmulgatoriScreen
 },
@@ -37,7 +39,7 @@ const Navigator= createBottomTabNavigator({
     navigationOptions: {
         headerVisible: false,
     },
-    //lazy: true,
+    //lazy: false,
     defaultNavigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused, horizontal, tintColor }) => {
               const { routeName } = navigation.state;
@@ -101,7 +103,7 @@ export default createAppContainer(createSwitchNavigator(
      // Main: MainNavigator
     },
     {
-      initialRouteName: 'Stack',
+      initialRouteName: 'Navigator',
     },
 
   ));

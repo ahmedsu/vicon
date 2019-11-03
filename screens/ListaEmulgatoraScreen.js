@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import {StyleSheet, Text, TouchableOpacity, View,ImageBackground,ScrollView } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View,ImageBackground,ScrollView, BackHandler } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import RNTextDetector from 'react-native-text-detector';
 import EmulgatorAPI from '../screens/services/EmulgatorAPI';
@@ -10,13 +10,29 @@ class ListaEmulgatoraScreen extends PureComponent {
   {
     super(props);
     this.state={
-        emulgatori:null
+        emulgatori:null,
+        clickTime: null,
     }
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
+ 
+  
   componentDidMount()
   {
+      BackHandler.addEventListener(
+        "hardwareBackPress",
+        this.handleBackButtonClick
+      );
       this.setState({emulgatori:this.props.navigation.getParam("listaEmulgatora")});
   }
+
+  handleBackButtonClick() {
+
+      this.props.navigation.navigate("EmulgatoriScreen");
+      return true;
+  }
+
+
   mapirajEmulgatore=()=>{
     return this.state.emulgatori.map((el)=>{
         return <ScrollView contentContainerStyle={{width:'90%',backgroundColor:'#29AAE3',height:250,marginTop:15,marginBottom:15,borderRadius:10,padding:5}} key={el.id}>
@@ -37,10 +53,12 @@ class ListaEmulgatoraScreen extends PureComponent {
   }
   render() {
     return (
-        <ScrollView contentContainerStyle={{width:'100%',alignItems:'center',backgroundColor:'#061F3E'}}> 
+        <View style={{height:'100%', backgroundColor:'#061F3E'}}>
+        <ScrollView nestedScrollEnabled contentContainerStyle={{width:'100%',alignItems:'center',backgroundColor:'#061F3E'}}> 
         {this.state.emulgatori && this.state.emulgatori.length>0 &&
         this.mapirajEmulgatore()}
         </ScrollView>
+        </View>
     );
   }
 }

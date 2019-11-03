@@ -1,6 +1,9 @@
+import config from './config';
+
 const UserAPI={
-    Register:(name,email,password)=>{
-        return fetch('http://192.168.137.222:1337/auth/local/register', {
+    Register:(name,email,password, currency)=>{
+        const fetchUrl = `${config.serverIp}/auth/local/register`;
+        return fetch(fetchUrl, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -10,6 +13,7 @@ const UserAPI={
             'username': name,
             'email':email,
             'password':password,
+            'defaultCurrency': currency
         }),
         })
         .then(res=>{
@@ -23,7 +27,8 @@ const UserAPI={
         })              
     },
     Login:(email,password)=>{
-        return fetch('http://192.168.137.222:1337/auth/local', {
+        const fetchUrl = `${config.serverIp}/auth/local/`;
+        return fetch(fetchUrl, {
         method: 'POST',
         headers: {
             Accept: 'application/json',

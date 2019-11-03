@@ -5,7 +5,8 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
-  Alert
+  Alert,
+  ToastAndroid
 } from 'react-native';
 
 import { RNCamera as Camera } from "react-native-camera";
@@ -15,6 +16,8 @@ import style, { screenHeight, screenWidth } from './src/styles/style';
 import BarcodeMask from 'react-native-barcode-mask';
 import ImagePicker from 'react-native-image-crop-picker';
 import BankaAPI from './screens/services/BankaAPI';
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 const PICTURE_OPTIONS = {
   quality: 0.8,
@@ -34,11 +37,13 @@ class App extends Component {
     regularImg: null,
     pokaz: null,
     kursnaLista: null,
-    focusedScreen: false
+    focusedScreen: false,
+    addedToCart: false
   }
 
   componentDidMount(){
     const { navigation } = this.props;
+    this.setupStorage();
     navigation.addListener('willFocus', () =>
       this.setState({ focusedScreen: true })
     );
@@ -79,7 +84,7 @@ class App extends Component {
   }
 
   resetFinal() {
-      this.setState({loading:false, inProcess: false, image: null,visionResp:[], regularImg: null});
+      this.setState({loading:false, inProcess: false, image: null,visionResp:[], regularImg: null, addedToCart: false});
   }
 
 
@@ -198,6 +203,19 @@ class App extends Component {
     console.log("MAP VISION RESP POZVAN");
     const IMAGE_TO_SCREEN_X = 280 / imageProperties.height;
     const IMAGE_TO_SCREEN_Y = 220 / imageProperties.width;
+    console.log("TREBA SE POZVAT ", visionResp.length);
+    console.log(visionResp);
+
+    let moneyValue = '';
+    visionResp.forEach((item) => {
+      let onlyNumber = item.text.match(/[-]{0,1}[\d]*[\.,]{0,1}[\d]+/);
+      if(onlyNumber != null){
+        moneyValue = onlyNumber;
+       // break;
+      }      
+    });
+    
+    this.setState({currency: moneyValue});
 
     return visionResp.map(item => {
         
@@ -257,7 +275,53 @@ class App extends Component {
    // console.log("CEK: ", parseFloat((value[0]/_item.Middle).toPrecision(2)))
     let result = parseFloat(valueChange).toFixed(2)/parseFloat(rateChange);
     console.log("RESULT: ", result);
-    return result.toPrecision(3);
+    return result.toFixed(2);
+  }
+
+  setupStorage = () => {
+    AsyncStorage.setItem('currencies', '');
+  }
+
+  saveToList = async () => {
+   let _currencies = await AsyncStorage.getItem("currencies");
+   let newValue = this.getCurrencyRate(this.state.currency, 'EUR');
+
+   console.log("SAVE U LIST: ");
+   console.log(_currencies);
+
+   if(_currencies != 'null' && _currencies != null){
+    if(_currencies == ''){
+     _currencies += `${newValue.toString()}`;
+    } else {
+      _currencies += `,${newValue.toString()}`;
+    }
+ 
+    console.log("LISTA: ");
+    console.log(_currencies);
+ 
+    AsyncStorage.setItem('currencies', _currencies.toString())
+    .then((res) => {
+      //this.props.navigation.navigate('ShoppingList')
+      this.setState({addedToCart: true});
+      ToastAndroid.showWithGravity(
+        'Added to your cart!',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    });
+   } else {
+     console.log("OTISLO U NE NULL");
+    AsyncStorage.setItem('currencies', newValue.toString())
+    .then((res) => {
+     this.setState({addedToCart: true});
+      ToastAndroid.showWithGravity(
+        'Added to your cart!',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    });
+   }
+   
   }
 
     /**
@@ -403,8 +467,11 @@ class App extends Component {
         </View>
         }
         <View style={{position:'absolute', bottom: 20, justifyContent:'center', alignItems:'center', width:'100%'}}>
+          {!this.state.addedToCart &&
         <View style={{width:'75%', flexDirection:'row', justifyContent:'space-between', marginBottom: 15}}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('ShoppingList')} style={{width: '58%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'#0984e3', zIndex: 9999}}>
+            <TouchableOpacity onPress={() => {
+              this.saveToList();
+            }} style={{width: '58%', height: 65, flexDirection:'row', borderRadius:10, alignItems:'center', paddingHorizontal: 10, justifyContent:'space-between', backgroundColor:'#0984e3', zIndex: 9999}}>
               <Image source={require('./src/images/cartWhite.png')} style={{width: 45, height: 35}} resizeMode={'contain'}></Image>
               <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 18}}>Add to list</Text>
             </TouchableOpacity>
@@ -413,14 +480,20 @@ class App extends Component {
               <Text style={{color:'#d63031', fontWeight:'bold', fontSize: 28}}>X</Text>
             </TouchableOpacity>
           </View>
-           {/*} <TouchableOpacity style={{
+          }
+
+          {this.state.addedToCart &&
+          
+           <TouchableOpacity style={{
                     padding: 15, 
                     justifyContent:'center',
                     alignItems:'center',
                     backgroundColor:'transparent'
             }} onPress={() =>this.resetFinal()}>
               <Text style={{color:'#00b894', fontSize: 17, fontWeight:'bold'}}>NEXT</Text>
-          </TouchableOpacity>*/}
+            </TouchableOpacity>
+          }
+
           </View>
       </ImageBackground>
       </View>

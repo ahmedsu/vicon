@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import {StyleSheet, Text, TouchableOpacity, View,ImageBackground } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View,ImageBackground, ToastAndroid } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import RNTextDetector from 'react-native-text-detector';
 import EmulgatorAPI from '../screens/services/EmulgatorAPI';
@@ -14,7 +14,8 @@ class EmulgatoriScreen extends PureComponent {
       nizPodataka:null,
       uslikano:false,
       uri:'',
-      focusedScreen: false
+      focusedScreen: false,
+      danger: false
     }
   }
 
@@ -34,14 +35,14 @@ class EmulgatoriScreen extends PureComponent {
     return (
       <View style={styles.container}>
         <View style={{flex:1}}>
-          {!this.state.uslikano && focusedScreen ?
+          {!this.state.uslikano && focusedScreen && this.state.danger == false ?
         <RNCamera
           ref={ref => {
             this.camera = ref;
           }}
           style={styles.preview}
           type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
+          //flashMode={RNCamera.Constants.FlashMode.on}
           androidCameraPermissionOptions={{
             title: 'Permission to use camera',
             message: 'We need your permission to use your camera',
@@ -55,6 +56,7 @@ class EmulgatoriScreen extends PureComponent {
             buttonNegative: 'Cancel',
           }}
         />:
+        this.state.danger ?
         <View style={{flex:1}}>
           <ImageBackground
           source={{uri:this.state.uri}}
@@ -76,7 +78,28 @@ class EmulgatoriScreen extends PureComponent {
             </TouchableOpacity>
             </View>
           </ImageBackground>
-        </View>
+        </View> : 
+        <View style={{flex:1}}>
+         <ImageBackground
+         source={{uri:this.state.uri}}
+         style={{width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}
+         >
+           <View
+           style={{backgroundColor:'#061F3E',height:'45%',width:'90%',alignItems:'center',justifyContent:'center',borderRadius:10}}
+           >
+             <Icon color={'#00b894'} size={50} name={'info'}/>
+             <Text style={{color:'white',marginTop:15,fontSize:16}}>This product is <Text style={{color:'#00b894',fontSize:16}}>safe</Text></Text>
+             <TouchableOpacity
+               onPress={()=>{
+                  this.setState({uslikano: false, danger: false});
+             }}
+           style={[styles.btn,{backgroundColor:'#29AAE3',marginTop:30}]}
+           >
+               <Text style={styles.btnText}>OK</Text>
+           </TouchableOpacity>
+           </View>
+         </ImageBackground>
+       </View>
 
         }
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
@@ -92,6 +115,11 @@ class EmulgatoriScreen extends PureComponent {
 
   takePicture = async() => {
     if (this.camera) {
+      ToastAndroid.showWithGravity(
+        'Please wait...',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
       const options = { quality: 1, base64: true,skipProcessing:true };
       const data = await this.camera.takePictureAsync(options);
       console.log(data.uri);
@@ -167,9 +195,11 @@ class EmulgatoriScreen extends PureComponent {
             console.log(this.state.nizPodataka);
             if(this.state.nizPodataka.length>0)
             {
-              this.setState({uslikano:true});
+              this.setState({uslikano:true, danger: true});
             }
           });
+        } else {
+          this.setState({uslikano:true, danger: false})
         }
         
         

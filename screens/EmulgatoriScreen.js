@@ -115,11 +115,11 @@ class EmulgatoriScreen extends PureComponent {
 
   takePicture = async() => {
     if (this.camera) {
-      ToastAndroid.showWithGravity(
+      /*ToastAndroid.showWithGravity(
         'Please wait...',
         ToastAndroid.SHORT,
         ToastAndroid.CENTER,
-      );
+      );*/
       const options = { quality: 1, base64: true,skipProcessing:true };
       const data = await this.camera.takePictureAsync(options);
       console.log(data.uri);

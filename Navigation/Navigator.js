@@ -103,7 +103,7 @@ export default createAppContainer(createSwitchNavigator(
      // Main: MainNavigator
     },
     {
-      initialRouteName: 'Navigator',
+      initialRouteName: 'Stack',
     },
 
   ));

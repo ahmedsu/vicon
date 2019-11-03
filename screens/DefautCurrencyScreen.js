@@ -31,7 +31,7 @@ class DefaultCurrencyScreen extends Component{
         console.log(name);
         console.log(email);
         console.log(password);
-        this.props.navigation.navigate('DefaultCurrencyScreen');
+       // this.props.navigation.navigate('DefaultCurrencyScreen');
  
          UserAPI.Register(name,email,password, currency)
          .then(res=>{
@@ -39,7 +39,8 @@ class DefaultCurrencyScreen extends Component{
              console.log(res.jwt);
              AsyncStorage.setItem("jwtToken",res.jwt)
              .then(()=>{
-                 this.props.navigation.navigate('DefaultCurrencyScreen');
+                 console.log("USLO OVJE");
+                 this.props.navigation.navigate('Navigator');
              })
  
          })
